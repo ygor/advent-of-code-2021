@@ -7,16 +7,16 @@ let measurements =
 
 let rec part1 = function
     | x :: y :: xs -> part1 (y :: xs) + (if y > x then 1 else 0)
-    | _ -> 0 
+    | _ -> 0
 
-let part2 (measurements: int list) =
+let part2 =
     measurements
     |> List.windowed 3
     |> List.map List.sum
     |> part1
-    
+
 [<EntryPoint>]
 let main _ =
     printfn $"Part 1: {part1 measurements}"
-    printfn $"Part 2: {part2 measurements}"
+    printfn $"Part 2: {part2}"
     0
