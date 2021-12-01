@@ -6,7 +6,7 @@ let measurements =
     |> List.map int
 
 let rec part1 = function
-    | x :: y :: xs -> part1 (y :: xs) + (if y > x then 1 else 0)
+    | x :: y :: ys -> part1 (y :: ys) + (if y > x then 1 else 0)
     | _ -> 0
 
 let part2 =
