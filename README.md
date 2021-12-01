@@ -1,7 +1,7 @@
-### Advent of Code 2020
+### Advent of Code 2021
 ---
 
-My solutions in F# to the [Advent of Code 2020](https://adventofcode.com/) puzzles.
+My solutions in F# to the [Advent of Code 2021](https://adventofcode.com/) puzzles.
 
 
 
