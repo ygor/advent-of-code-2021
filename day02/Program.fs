@@ -12,12 +12,8 @@ let course =
             | _ -> failwithf $"Invalid input %s{line}")
         ((0, 0), (0, 0, 0))
 
-let part1 = fst course |> (fun (h, d) -> h * d)
-
-let part2 = snd course |> (fun (h, d, _) -> h * d)
-
 [<EntryPoint>]
 let main _ =
-    printfn $"Part 1: {part1}"
-    printfn $"Part 2: {part2}"
+    printfn $"Part 1: {fst course |> (fun (h, d) -> h * d)}"
+    printfn $"Part 2: {snd course |> (fun (h, d, _) -> h * d)}"
     0
