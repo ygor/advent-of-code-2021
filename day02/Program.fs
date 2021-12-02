@@ -1,27 +1,22 @@
 ﻿open System.IO
 open Extensions
 
-let input = File.ReadAllLines("input.txt") 
+let input = File.ReadAllLines("input.txt")
 
-let part1 =
+let course =
     input
-    |> Seq.fold (fun (horizontal, depth) line ->
-        match line with
-        | Regex "forward (\d+)" [ number ] -> (horizontal + int number, depth)
-        | Regex "down (\d+)" [ number ] -> (horizontal, depth + int number)
-        | Regex "up (\d+)" [ number ] -> (horizontal, depth - int number)
-        | _ -> failwithf $"Invalid input %s{line}") (0, 0)
-    |> (fun (a, b) -> a * b)
+    |> Seq.fold
+        (fun ((h1, d1), (h2, d2, aim)) line ->
+            match line with
+            | Regex "forward (\d+)" [ x ] -> ((h1 + int x, d1), (h2 + int x, d2 + (aim * int x), aim))
+            | Regex "down (\d+)" [ x ] -> ((h1, d1 + int x), (h2, d2, aim + int x))
+            | Regex "up (\d+)" [ x ] -> ((h1, d1 - int x), (h2, d2, aim - int x))
+            | _ -> failwithf $"Invalid input %s{line}")
+        ((0, 0), (0, 0, 0))
 
-let part2 =
-    input
-    |> Seq.fold (fun (horizontal, depth, aim) line ->
-        match line with
-        | Regex "forward (\d+)" [ number ] -> (horizontal + int number, depth + (aim * int number), aim)
-        | Regex "down (\d+)" [ number ] -> (horizontal, depth, aim + int number)
-        | Regex "up (\d+)" [ number ] -> (horizontal, depth, aim - int number)
-        | _ -> failwithf $"Invalid input %s{line}") (0, 0, 0)
-    |> (fun (a, b, _) -> a * b)
+let part1 = course |> (fun ((h, d), _) -> h * d)
+
+let part2 = course |> (fun (_, (h, d, _)) -> h * d)
 
 [<EntryPoint>]
 let main _ =
