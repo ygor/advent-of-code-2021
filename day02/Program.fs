@@ -12,9 +12,9 @@ let course =
             | _ -> failwithf $"Invalid input %s{line}")
         ((0, 0), (0, 0, 0))
 
-let part1 = course |> (fun ((h, d), _) -> h * d)
+let part1 = fst course |> (fun (h,d ) -> h * d)
 
-let part2 = course |> (fun (_, (h, d, _)) -> h * d)
+let part2 = snd course |> (fun (h, d, _) -> h * d)
 
 [<EntryPoint>]
 let main _ =
