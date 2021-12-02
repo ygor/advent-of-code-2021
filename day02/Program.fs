@@ -1,10 +1,8 @@
 ﻿open System.IO
 open Extensions
 
-let input = File.ReadAllLines("input.txt")
-
 let course =
-    input
+    File.ReadAllLines("input.txt")
     |> Seq.fold
         (fun ((h1, d1), (h2, d2, aim)) line ->
             match line with
