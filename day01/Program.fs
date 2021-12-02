@@ -1,17 +1,14 @@
 ﻿open System.IO
+open Extensions
 
 let measurements =
-    File.ReadAllLines("input.txt")
-    |> Seq.toList
-    |> List.map int
+    File.ReadAllLines("input.txt") |> Seq.map int
 
 let part1 =
-    List.pairwise
-    >> List.filter (fun (x, y) -> y > x)
-    >> List.length
+    Seq.pairwise >> Seq.lengthBy (fun (x, y) -> y > x)
 
 let part2 =
-    List.windowed 3 >> List.map List.sum >> part1
+    Seq.windowed 3 >> Seq.map Seq.sum >> part1
 
 [<EntryPoint>]
 let main _ =
