@@ -6,20 +6,62 @@ let report =
     File.ReadAllLines("input.txt")
     |> Seq.map (Seq.map (string >> float))
     |> matrix
-    |> Matrix.toColSeq
 
-let commonBits (report: Vector<float> seq) predicate =
-    report
-    |> Seq.map (fun col ->
-        if (predicate (Vector.sum col) (float (Vector.length col) / 2.0)) then "1" else "0")
-    |> Seq.reduce (+)
+let commonValue (column: float seq) selector =
+    column
+    |> Seq.groupBy id
+    |> selector (fun (_, values) -> Seq.length values)
+    |> fst
+    
+let mostCommonValue (column: float seq) =
+    commonValue column Seq.maxBy
 
-let part1 =
-    let gamma = commonBits report (>)
-    let epsilon = commonBits report (<)
-    Convert.ToInt32(gamma, 2) * Convert.ToInt32(epsilon, 2)
+let leastCommonValue (column: float seq) =
+    commonValue column Seq.minBy
+
+let commonBits valueFn (report: Matrix<float>) =
+    let value =
+        report
+        |> Matrix.toColSeq
+        |> Seq.map (valueFn >> string)
+        |> Seq.reduce (+)
+    
+    Convert.ToInt32(value, 2)
+
+let gamma =
+    commonBits mostCommonValue
+
+let epsilon =
+    commonBits leastCommonValue
+
+let rate valueSelector (report: Matrix<float>) =
+    let value =
+        report
+        |> Matrix.toColSeqi 
+        |> Seq.fold (fun (report': Matrix<float>) (i, _) ->
+            if report'.RowCount = 1 then report'
+            else
+                let column = report'.Column(i)
+                let most, least = mostCommonValue column, leastCommonValue column                
+                report'
+                |> Matrix.toRowSeq
+                |> Seq.filter (fun row -> row.At(i) = valueSelector most least)
+                |> matrix) report
+        |> Matrix.toRowSeq
+        |> Seq.head
+        |> Seq.map string
+        |> Seq.reduce (+)
+        
+    Convert.ToInt32(value, 2)
+
+let oxygen =
+    rate (fun most least -> if most = least then 1.0 else most)
+
+let scrubbing =
+    rate (fun most least -> if most = least then 0.0 else least)     
     
 [<EntryPoint>]
 let main _ =
-    printfn $"Part 1: %i{part1}"
+    printfn $"Part 1: %i{gamma report * epsilon report}"
+    printfn $"Part 2: %i{scrubbing report * oxygen report}"
     0
