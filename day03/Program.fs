@@ -22,7 +22,7 @@ let power =
     |> Seq.map fromBinary
     |> Seq.reduce (*)
 
-let rec iterate index j (lines: string list list) =
+let rec iterate index i (lines: string list list) =
     match Seq.length lines with
     | 1 -> List.head lines
     | _ ->
@@ -31,12 +31,12 @@ let rec iterate index j (lines: string list list) =
         |> List.map (fun (c, lines') -> ((List.length lines', c), lines'))
         |> List.sortBy fst
         |> List.map snd
-        |> List.at j
-        |> iterate (index + 1) j
+        |> List.at i
+        |> iterate (index + 1) i
 
 let life =
     [0..1]
-    |> Seq.map (fun j -> iterate 0 j lines)
+    |> Seq.map (fun i -> iterate 0 i lines)
     |> Seq.map fromBinary
     |> Seq.reduce (*)
     
