@@ -1,60 +1,47 @@
 ﻿open System
 open System.IO
-open MathNet.Numerics.LinearAlgebra
+open day03.Extensions
 
-let report =
+let lines =
     File.ReadAllLines("input.txt")
-    |> Seq.map (Seq.map (string >> float))
-    |> matrix
+    |> Seq.map (Seq.map string >> List.ofSeq)
+    |> List.ofSeq
 
-let commonValue (column: float seq) selector =
-    column
-    |> Seq.groupBy id
-    |> selector (fun (_, values) -> Seq.length values)
-    |> fst
-    
-let mostCommonValue (column: float seq) =
-    commonValue column Seq.maxBy
+let fromBinary (value: string seq) =
+    Convert.ToInt32(Seq.reduce (+) value, 2)
 
-let leastCommonValue (column: float seq) =
-    commonValue column Seq.minBy
+let power =
+    lines
+    |> Seq.transpose
+    |> Seq.map (fun column ->
+        column
+        |> Seq.groupBy id
+        |> Seq.sortBy (fun (_, values) -> Seq.length values)
+        |> Seq.map (fun (value, _) -> string value))
+    |> Seq.transpose
+    |> Seq.map fromBinary
+    |> Seq.reduce (*)
 
-let commonBits valueFn (report: Matrix<float>) =
-    report
-    |> Matrix.toColSeq
-    |> Seq.map (valueFn >> string)
-    |> Seq.reduce (+)
-    |> (fun value -> Convert.ToInt32(value, 2))
+let rec iterate index j (lines: string list list) =
+    match Seq.length lines with
+    | 1 -> List.head lines
+    | _ ->
+        lines
+        |> List.groupBy (fun list -> list.[index])
+        |> List.map (fun (c, lines') -> ((List.length lines', c), lines'))
+        |> List.sortBy fst
+        |> List.map snd
+        |> List.at j
+        |> iterate (index + 1) j
 
-let powerConsumption =
-    commonBits mostCommonValue report * commonBits leastCommonValue report 
-
-let rate valueSelector (report: Matrix<float>) =
-    report
-    |> Matrix.toColSeqi 
-    |> Seq.fold (fun (report': Matrix<float>) (i, _) ->
-        if report'.RowCount = 1 then report'
-        else
-            let column = report'.Column(i)
-            let most, least = mostCommonValue column, leastCommonValue column                
-            report'
-            |> Matrix.toRowSeq
-            |> Seq.filter (fun row -> row.At(i) = valueSelector most least)
-            |> matrix) report
-    |> Matrix.toRowSeq
-    |> Seq.head
-    |> Seq.map string
-    |> Seq.reduce (+)
-    |> (fun value -> Convert.ToInt32(value, 2))
-
-let oxygen =
-    rate (fun most least -> if most = least then 1.0 else most)
-
-let scrubbing =
-    rate (fun most least -> if most = least then 0.0 else least)     
+let life =
+    [0..1]
+    |> Seq.map (fun j -> iterate 0 j lines)
+    |> Seq.map fromBinary
+    |> Seq.reduce (*)
     
 [<EntryPoint>]
 let main _ =
-    printfn $"Part 1: %i{powerConsumption}"
-    printfn $"Part 2: %i{scrubbing report * oxygen report}"
+    printfn $"Part 1: %i{power}"
+    printfn $"Part 2: %i{life}"
     0
