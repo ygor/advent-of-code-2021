@@ -4,9 +4,7 @@ open day04.Extensions
 let input = File.ReadAllText("input.txt") |> String.split "\n\n"
 
 let numbers =
-    List.head input
-    |> String.split ","
-    |> List.map int
+    List.head input |> String.split "," |> List.map int
 
 let boards =
     List.tail input
