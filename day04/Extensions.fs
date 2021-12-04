@@ -15,3 +15,7 @@ module Regex =
 module Seq =
     let any predicate seq =
         seq |> Seq.filter predicate |> Seq.length |> (<) 0
+
+module Map =
+    let removeMany keys map =
+        keys |> Seq.fold (fun map' key -> Map.remove key map') map
