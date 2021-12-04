@@ -19,7 +19,7 @@ let boards =
 let isWinner drawn board =
     Seq.any (fun numbers -> List.except drawn numbers = []) board
     
-let result boards numbers =
+let play boards numbers =
     numbers
     |> Seq.fold (fun (winners, boards', drawn) number ->
         let drawn' = number :: drawn
@@ -38,7 +38,7 @@ let score (board, drawn) =
     
 [<EntryPoint>]
 let main _ =
-    let winners, _, _ = result boards numbers
+    let winners, _, _ = play boards numbers
     let first = winners |> Seq.minBy (snd >> List.length)
     let last = winners |> Seq.maxBy (snd >> List.length)
     
