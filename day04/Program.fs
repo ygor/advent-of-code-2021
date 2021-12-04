@@ -28,7 +28,7 @@ let result boards numbers =
             |> Map.filter (fun _ -> isWinner drawn')
             |> Map.map (fun _ board -> board, drawn')
         
-        Map.values winners' |> Seq.append winners,
+        Seq.append winners (Map.values winners'),
         Map.removeMany (Map.keys winners') boards',
         drawn') (Seq.empty, boards, [])
 
