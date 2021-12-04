@@ -23,13 +23,10 @@ let result boards numbers =
     numbers
     |> Seq.fold (fun (boards', winners, drawn) number ->
         let drawn' = number :: drawn
-        let winners' =
-            boards'
-            |> Map.filter (fun _ -> isWinner drawn')
-            |> Map.map (fun _ board -> board, drawn')
+        let winners' = Map.filter (fun _ -> isWinner drawn') boards'
         
         Map.removeMany (Map.keys winners') boards',
-        Map.values winners' |> Seq.append winners,
+        Map.values winners' |> Seq.map (fun board -> board, drawn') |> Seq.append winners,
         drawn') ((List.indexed >> Map.ofList) boards, Seq.empty, [])
 
 let score (board, drawn) =
