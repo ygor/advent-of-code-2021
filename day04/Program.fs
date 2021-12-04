@@ -12,20 +12,25 @@ let boards =
         block
         |> String.split "\n"
         |> List.map (String.trim >> Regex.split "\s+" >> List.map int)
-        |> (fun board -> List.concat [board; List.transpose board]))
-
+        |> (fun rows -> List.concat [rows; List.transpose rows]))
+    |> List.indexed
+    |> Map.ofList
+    
 let isWinner drawn board =
     Seq.any (fun numbers -> List.except drawn numbers = []) board
     
 let result boards numbers =
     numbers
-    |> Seq.fold (fun (boards', winners, drawn) number ->
+    |> Seq.fold (fun (winners, boards', drawn) number ->
         let drawn' = number :: drawn
-        let winners' = Map.filter (fun _ -> isWinner drawn') boards'
+        let winners' =
+            boards'
+            |> Map.filter (fun _ -> isWinner drawn')
+            |> Map.map (fun _ board -> board, drawn')
         
+        Map.values winners' |> Seq.append winners,
         Map.removeMany (Map.keys winners') boards',
-        Map.values winners' |> Seq.map (fun board -> board, drawn') |> Seq.append winners,
-        drawn') ((List.indexed >> Map.ofList) boards, Seq.empty, [])
+        drawn') (Seq.empty, boards, [])
 
 let score (board, drawn) =
     let sum = List.except drawn (List.concat board) |> List.sum
@@ -33,7 +38,7 @@ let score (board, drawn) =
     
 [<EntryPoint>]
 let main _ =
-    let (_, winners, _) = result boards numbers
+    let winners, _, _ = result boards numbers
     let first = winners |> Seq.minBy (snd >> List.length)
     let last = winners |> Seq.maxBy (snd >> List.length)
     
