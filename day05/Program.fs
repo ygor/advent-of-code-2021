@@ -19,7 +19,7 @@ let verticals =
     lines
     |> List.filter (fun ((x1, y1), (x2, y2)) -> abs (x2 - x1) = abs (y2 - y1))
     |> List.map (fun ((x1, y1), (x2, y2)) ->
-        List.zip [int x1 .. Math.sign (x2 - x1) .. int x2] [int y1 .. Math.sign (y2 - y1) .. int y2])
+        List.zip [x1 .. Math.sign (x2 - x1) .. x2] [y1 .. Math.sign (y2 - y1) .. y2])
     
 let overlaps lines =
     lines
