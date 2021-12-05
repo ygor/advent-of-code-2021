@@ -22,8 +22,7 @@ let overlaps lines =
     lines
     |> Seq.concat
     |> Seq.groupBy id
-    |> Seq.filter (snd  >> Seq.length >> (<) 1)
-    |> Seq.length
+    |> Seq.lengthBy (snd  >> Seq.length >> (<) 1)
     
 [<EntryPoint>]
 let main _ =
