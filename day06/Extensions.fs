@@ -4,5 +4,5 @@ module String =
     let split (sep: string) (input: string) = input.Split(sep) |> List.ofArray
 
 module Map =
-    let getOrDefault key defaultValue map = 
+    let itemOrDefault key defaultValue map = 
         if Map.containsKey key map then map.[key] else defaultValue

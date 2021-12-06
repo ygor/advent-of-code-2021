@@ -17,11 +17,11 @@ let simulate days (fish: Map<int, bigint>) =
             match f with
             | 0 ->
                 fish''
-                |> Map.add 6 (Map.getOrDefault 6 (bigint 0) fish'' + count)
-                |> Map.add 8 (Map.getOrDefault 6 (bigint 0) fish'' + count)
+                |> Map.add 6 (Map.itemOrDefault 6 (bigint 0) fish'' + count)
+                |> Map.add 8 (Map.itemOrDefault 6 (bigint 0) fish'' + count)
             | n ->
                 fish''
-                |> Map.add (n - 1) (Map.getOrDefault (n - 1) (bigint 0) fish'' + count)) Map.empty
+                |> Map.add (n - 1) (Map.itemOrDefault (n - 1) (bigint 0) fish'' + count)) Map.empty
         ) fish
     |> Map.toSeq
     |> Seq.sumBy snd  
