@@ -5,6 +5,4 @@ module String =
 
 module Map =
     let getOrDefault key defaultValue map = 
-        if Map.containsKey key map then map.[key] else defaultValue    
-        
-        
+        if Map.containsKey key map then map.[key] else defaultValue
