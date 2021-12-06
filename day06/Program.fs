@@ -1,5 +1,5 @@
 ﻿open System.IO
-open day05.Extensions
+open day06.Extensions
 
 let fish =
     File.ReadAllText("input.txt")
