@@ -4,27 +4,16 @@ open day05.Extensions
 let fish =
     File.ReadAllText("input.txt")
     |> String.split ","
-    |> Seq.map int
-    |> Seq.groupBy id
-    |> Seq.map (fun (f, fs) -> f, bigint (Seq.length fs))
-    |> Map.ofSeq
+    |> List.map int
+    |> List.fold (fun (list: bigint list) value ->
+        List.updateAt value (list.[value] + (bigint 1)) list) (List.init 9 (fun _ -> bigint 0)) 
 
-let simulate days (fish: Map<int, bigint>) =
+let simulate days (initial: List<bigint>) =
     [1 .. days]
-    |> Seq.fold (fun fish' _ ->
-        fish'
-        |> Map.fold (fun fish'' f count ->
-            match f with
-            | 0 ->
-                fish''
-                |> Map.add 6 (Map.itemOrDefault 6 (bigint 0) fish'' + count)
-                |> Map.add 8 (Map.itemOrDefault 6 (bigint 0) fish'' + count)
-            | n ->
-                fish''
-                |> Map.add (n - 1) (Map.itemOrDefault (n - 1) (bigint 0) fish'' + count)) Map.empty
-        ) fish
-    |> Map.toSeq
-    |> Seq.sumBy snd  
+    |> Seq.fold (fun fish _ ->
+        let fish' = List.tail fish @ [List.head fish]
+        List.updateAt 6 (fish'.[6] + fish'.[8]) fish') initial
+    |> List.sum  
     
 [<EntryPoint>]
 let main _ =
