@@ -6,9 +6,9 @@ let fish =
     |> String.split ","
     |> List.map int
     |> List.fold (fun list value ->
-        List.updateAt value (list.[value] + (bigint 1)) list) (List.init 9 (fun _ -> bigint 0)) 
+        List.updateAt value (list.[value] + bigint 1) list) (List.init 9 (fun _ -> bigint 0)) 
 
-let simulate days (initial: List<bigint>) =
+let simulate days initial =
     [1 .. days]
     |> Seq.fold (fun fish _ ->
         let fish' = List.tail fish @ [List.head fish]
