@@ -19,7 +19,9 @@ let simulate days (fish: Map<int, bigint>) =
                 fish''
                 |> Map.add 6 ((Map.getOrDefault 6 (bigint 0) fish'') + count)
                 |> Map.add 8 ((Map.getOrDefault 6 (bigint 0) fish'') + count)
-            | n -> Map.add (n - 1) ((Map.getOrDefault (n - 1) (bigint 0) fish'') + count) fish'') Map.empty
+            | n ->
+                fish''
+                |> Map.add (n - 1) ((Map.getOrDefault (n - 1) (bigint 0) fish'') + count)) Map.empty
         ) fish
     |> Map.toSeq
     |> Seq.sumBy snd  
