@@ -5,7 +5,8 @@ let fish =
     File.ReadAllText("input.txt")
     |> String.split ","
     |> List.map int
-    |> List.fold (fun list value -> List.updateAt value (list.[value] + (bigint 1)) list) (List.init 9 (fun _ -> bigint 0)) 
+    |> List.fold (fun list value ->
+        List.updateAt value (list.[value] + (bigint 1)) list) (List.init 9 (fun _ -> bigint 0)) 
 
 let simulate days (initial: List<bigint>) =
     [1 .. days]
