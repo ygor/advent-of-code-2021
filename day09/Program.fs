@@ -33,14 +33,11 @@ let lows =
             else lows') lows) []
     
 let rec basin (area: Set<int * int>) =
-    let border =
+    let area' =
         area
         |> Set.map adjacents
         |> Set.unionMany
         |> (><) Set.difference area
-
-    let area' =
-        border
         |> Set.filter (fun (x, y) ->
             snd heightmap.[y].[x] < 9 &&
             adjacents (x, y)
