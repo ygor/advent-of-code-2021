@@ -22,7 +22,7 @@ let lows =
             let points = adjacents (x, y) |> Set.map (fun (a, b) -> map.[b].[a])
             if Set.all (fun h -> h > map.[y].[x]) points then (x, y) :: lows' else lows') lows) []
     
-let rec basin (area: Set<int * int>) =
+let rec basin area =
     let area' =
         area
         |> Set.map adjacents
