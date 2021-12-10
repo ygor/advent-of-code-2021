@@ -45,6 +45,6 @@ let part2 =
     
 [<EntryPoint>]
 let main _ =
-    printfn $"%A{part1}"
-    printfn $"%A{part2}"
+    printfn $"Part 1: %A{part1}"
+    printfn $"Part 2: %A{part2}"
     0
