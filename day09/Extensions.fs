@@ -1,6 +1,5 @@
-module day08.Extensions
+module day09.Extensions
 
-let flip f a b = f b a
 let (><) f a b = f b a
 
 module String =
