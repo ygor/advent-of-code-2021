@@ -1,7 +1,5 @@
 module day09.Extensions
 
-let (><) f a b = f b a
-
 module String =
     let split (sep: string) (input: string) = input.Split(sep) |> List.ofArray
 
