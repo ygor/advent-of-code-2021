@@ -62,7 +62,6 @@ let part2 =
     |> Seq.take 3
     |> Seq.reduce (*)
     
-    
 [<EntryPoint>]
 let main _ =
     printfn $"%A{part1}"
