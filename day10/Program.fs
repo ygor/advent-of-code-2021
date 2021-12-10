@@ -33,8 +33,7 @@ let part2 =
         | _ -> bigint 0 )
     |> Seq.filter ((<) (bigint 0))
     |> Seq.sort
-    |> (fun scores -> Seq.skip ((Seq.length scores - 1) / 2) scores)
-    |> Seq.head
+    |> (fun scores -> Seq.skip ((Seq.length scores - 1) / 2) scores |> Seq.head)
         
 [<EntryPoint>]
 let main _ =
