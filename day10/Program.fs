@@ -34,26 +34,23 @@ let part1 =
 
     lines
     |> Seq.map (parse [Leaf '.'] [])
-    |> Seq.map (fun line ->
+    |> Seq.sumBy (fun line ->
         match line with
         | Corrupt c -> points.[c]
         | _ -> 0 )
-    |> Seq.sum
     
 let part2 =
     let points = [(')', 1); ('>', 4); ('}', 3); (']', 2)] |> Map.ofList
-    let scores =
-        lines
-        |> Seq.map (parse [Leaf '.'] [])
-        |> Seq.map (fun line ->
-            match line with
-            | Incomplete cs -> List.fold (fun score c -> score * (bigint 5) + (bigint points.[map.[c]])) (bigint 0) cs
-            | _ -> bigint 0 )
-        |> Seq.filter ((<) (bigint 0))
-    
-    scores
+
+    lines
+    |> Seq.map (parse [Leaf '.'] [])
+    |> Seq.map (fun line ->
+        match line with
+        | Incomplete cs -> List.fold (fun score c -> score * (bigint 5) + (bigint points.[map.[c]])) (bigint 0) cs
+        | _ -> bigint 0 )
+    |> Seq.filter ((<) (bigint 0))
     |> Seq.sort
-    |> Seq.skip ((Seq.length scores - 1) / 2)
+    |> (fun scores -> Seq.skip ((Seq.length scores - 1) / 2) scores)
     |> Seq.head
         
 [<EntryPoint>]
