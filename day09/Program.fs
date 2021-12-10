@@ -27,7 +27,6 @@ let rec basin (area: Set<int * int>) =
         area
         |> Set.map adjacents
         |> Set.unionMany
-        |> (><) Set.difference area
         |> Set.filter (fun (x, y) -> map.[y].[x] < 9)
         |> Set.union area
     
