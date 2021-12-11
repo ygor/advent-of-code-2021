@@ -1,5 +1,4 @@
 ﻿open System.IO
-open day11.Extensions
 
 let input = File.ReadAllLines("input.txt")
 
