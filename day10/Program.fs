@@ -3,12 +3,12 @@
 let lines = System.IO.File.ReadAllLines("input.txt") |> Seq.map List.ofSeq
 let map = [('(', ')'); ('<', '>'); ('{', '}'); ('[', ']')] |> Map.ofList    
 
-let rec parse (opens: char list) (line: char list) =
+let rec parse (opened: char list) (line: char list) =
     match line with
-    | [] -> Result.Ok opens
+    | [] -> Result.Ok opened
     | char :: tail ->
-        if Seq.contains char "([<{" then parse (char :: opens) tail
-        elif List.length opens > 0 && map.[List.head opens] = char then parse (List.tail opens) tail
+        if Seq.contains char "([<{" then parse (char :: opened) tail
+        elif List.length opened > 0 && map.[List.head opened] = char then parse (List.tail opened) tail
         else Result.Error char
 
 let incomplete, corrupted = Seq.map (parse []) lines |> Seq.partitionMap id
