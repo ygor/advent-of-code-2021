@@ -9,18 +9,15 @@ let map =
 let height, width = List.length map, List.length map.[0]
 
 let adjacents (x,y) =
-    [(-1, 0); (1, 0); (0, -1); (0, 1)]
-    |> Seq.map (fun (dx, dy) -> (x + dx, y + dy))
-    |> Seq.filter (fun (x, y) -> x >= 0 && x < width && y >= 0 && y < height)
-    |> Set.ofSeq
+    Set.ofList [(-1, 0); (1, 0); (0, -1); (0, 1)]
+    |> Set.map (fun (dx, dy) -> (x + dx, y + dy))
+    |> Set.filter (fun (x, y) -> x >= 0 && x < width && y >= 0 && y < height)
 
 let lows =
-    [0 .. (width - 1)]
-    |> List.fold (fun lows x ->
-        [0 ..  (height - 1)]
-        |> List.fold (fun lows' y ->
-            let points = adjacents (x, y) |> Set.map (fun (a, b) -> map.[b].[a])
-            if Set.all (fun h -> h > map.[y].[x]) points then (x, y) :: lows' else lows') lows) []
+    List.foldn width (fun lows x ->
+        List.foldn height (fun lows' y ->
+            if Set.all (fun (a, b) -> map.[b].[a] > map.[y].[x]) (adjacents (x, y))
+            then Set.add (x, y) lows' else lows') lows) Set.empty<int * int>
     
 let rec basin area =
     let area' =
@@ -33,12 +30,11 @@ let rec basin area =
     if Set.difference area' area = Set.empty then area' else basin area'      
 
 let part1 =
-    lows |> List.sumBy (fun (x, y) -> map.[y].[x] + 1)
+    lows |> Set.toSeq |> Seq.sumBy (fun (x, y) -> map.[y].[x] + 1)
 
 let part2 =
     lows
-    |> Seq.map (fun point -> Set.add point Set.empty)
-    |> Seq.map (basin >> Set.count)
+    |> Set.map (fun point -> basin (Set.add point Set.empty) |> Set.count)
     |> Seq.sortDescending
     |> Seq.take 3
     |> Seq.reduce (*)
