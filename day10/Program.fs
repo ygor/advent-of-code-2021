@@ -11,7 +11,7 @@ let rec parse (opens: char list) (line: char list) =
         elif List.length opens > 0 && map.[List.head opens] = char then parse (List.tail opens) tail
         else Result.Error char
 
-let (incomplete, corrupted) = Seq.map (parse []) lines |> Seq.partitionMap id
+let incomplete, corrupted = Seq.map (parse []) lines |> Seq.partitionMap id
 
 let part1 =
     let points = [(')', 3); ('>', 25137); ('}', 1197); (']', 57)] |> Map.ofList
