@@ -39,8 +39,12 @@ let part1 steps =
         map
         |> Map.filter (fun _ -> snd)
         |> Map.count)
+
+let rec part2 map =
+    if Map.forall (fun _ (energy, _) -> energy = 0) map then 0 else 1 + part2 (step map)
     
 [<EntryPoint>]
 let main _ =
     printfn $"Part 1: %i{part1 100}"
+    printfn $"Part 2: %i{part2 map}"
     0
