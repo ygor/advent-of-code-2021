@@ -1,8 +1,7 @@
 ﻿open System.IO
+open day10.Extensions
     
-let lines =
-    File.ReadAllLines("input.txt") |> Seq.map (List.ofSeq)
-
+let lines = File.ReadAllLines("input.txt") |> Seq.map (List.ofSeq)
 let map = [('(', ')'); ('<', '>'); ('{', '}'); ('[', ']')] |> Map.ofList    
 
 let rec parse (opens: char list) (line: char list) =
@@ -13,25 +12,19 @@ let rec parse (opens: char list) (line: char list) =
         elif List.length opens > 0 && map.[List.head opens] = char then parse (List.tail opens) tail
         else Result.Error char
 
-let part1 =
-    let points = [(')', 3); ('>', 25137); ('}', 1197); (']', 57)] |> Map.ofList
-
+let (incomplete, corrupted) =
     lines
     |> Seq.map (parse [])
-    |> Seq.sumBy (fun line ->
-        match line with
-        | Error c -> points.[c]
-        | _ -> 0 )
+    |> Seq.partitionMap id
+
+let part1 =
+    let points = [(')', 3); ('>', 25137); ('}', 1197); (']', 57)] |> Map.ofList
+    corrupted |> Seq.sumBy (fun c -> points.[c])
     
 let part2 =
     let points = [(')', bigint 1); ('>', bigint 4); ('}', bigint 3); (']', bigint 2)] |> Map.ofList
-    
-    lines
-    |> Seq.map (fun line ->
-        match parse [] line with
-        | Ok cs -> List.fold (fun score c -> score * (bigint 5) + points.[map.[c]]) (bigint 0) cs
-        | _ -> bigint 0 )
-    |> Seq.filter ((<) (bigint 0))
+    incomplete
+    |> Seq.map (List.fold (fun score c -> score * (bigint 5) + points.[map.[c]]) (bigint 0))
     |> Seq.sort
     |> (fun scores -> Seq.skip ((Seq.length scores - 1) / 2) scores |> Seq.head)
         
