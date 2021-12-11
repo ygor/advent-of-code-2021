@@ -17,7 +17,7 @@ let lows =
     List.foldn width (fun lows x ->
         List.foldn height (fun lows' y ->
             if Set.all (fun (a, b) -> map.[b].[a] > map.[y].[x]) (adjacents (x, y))
-            then Set.add (x, y) lows' else lows') lows) Set.empty<int * int>
+            then Set.add (x, y) lows' else lows') lows) Set.empty
     
 let rec basin area =
     let area' =
