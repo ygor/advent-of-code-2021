@@ -7,7 +7,7 @@ let rec parse (opened: char list) (line: char list) =
     match line with
     | [] -> Result.Ok opened
     | char :: tail ->
-        if Seq.contains char "([<{" then parse (char :: opened) tail
+        if map.Keys.Contains char then parse (char :: opened) tail
         elif List.length opened > 0 && map.[List.head opened] = char then parse (List.tail opened) tail
         else Result.Error char
 
