@@ -1,7 +1,6 @@
-﻿open System.IO
-open day10.Extensions
+﻿open day10.Extensions
     
-let lines = File.ReadAllLines("input.txt") |> Seq.map (List.ofSeq)
+let lines = System.IO.File.ReadAllLines("input.txt") |> Seq.map List.ofSeq
 let map = [('(', ')'); ('<', '>'); ('{', '}'); ('[', ']')] |> Map.ofList    
 
 let rec parse (opens: char list) (line: char list) =
@@ -12,10 +11,7 @@ let rec parse (opens: char list) (line: char list) =
         elif List.length opens > 0 && map.[List.head opens] = char then parse (List.tail opens) tail
         else Result.Error char
 
-let (incomplete, corrupted) =
-    lines
-    |> Seq.map (parse [])
-    |> Seq.partitionMap id
+let (incomplete, corrupted) = Seq.map (parse []) lines |> Seq.partitionMap id
 
 let part1 =
     let points = [(')', 3); ('>', 25137); ('}', 1197); (']', 57)] |> Map.ofList
