@@ -16,8 +16,7 @@ let rec count (path: string list) canVisit =
         caves.[List.head path]
         |> List.filter (fun next ->
             next <> "start" && (isLarge next || not (List.contains next path) || canVisit path))
-        |> List.map (fun next -> count (next :: path) canVisit)
-        |> List.sum
+        |> List.sumBy (fun next -> count (next :: path) canVisit)
 
 let part1 =
     count [ "start" ] (fun _ -> false)
