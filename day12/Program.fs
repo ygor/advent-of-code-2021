@@ -8,25 +8,22 @@ let connect (a, b) (caves: Map<string, Set<string>>) =
 let caves =
     File.ReadAllLines("input.txt")
     |> Seq.map (String.split "-")
-    |> Seq.fold
-        (fun caves line ->
-            caves
-            |> connect (line.[0], line.[1])
-            |> connect (line.[1], line.[0]))
-        Map.empty
+    |> Seq.fold (fun caves line ->
+        caves
+        |> connect (line.[0], line.[1])
+        |> connect (line.[1], line.[0])) Map.empty
     |> Map.map (fun _ -> Set.toList)
 
 let isSmall (cave: string) = cave.ToUpper() <> cave
 
 let rec visit (paths: string list list) =
     paths
-    |> List.map
-        (fun path ->
-            if (List.head path = "end") then [ [ path ] ]
-            else
-                caves.[List.head path]
-                |> List.map (fun next ->
-                    if (List.contains next path && isSmall next) then [ path ] else visit [ next :: path ]))
+    |> List.map (fun path ->
+        if (List.head path = "end") then [ [ path ] ]
+        else
+            caves.[List.head path]
+            |> List.map (fun next ->
+                if (List.contains next path && isSmall next) then [ path ] else visit [ next :: path ]))
     |> (List.concat >> List.concat)
 
 let part1 =
