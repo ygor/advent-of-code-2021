@@ -14,24 +14,38 @@ let caves =
         |> connect (line.[1], line.[0])) Map.empty
     |> Map.map (fun _ -> Set.toList)
 
-let isSmall (cave: string) = cave.ToUpper() <> cave
-
-let rec visit (paths: string list list) =
+let canVisit1 (cave: string) (path: string list) = 
+    not (List.contains cave path) || cave.ToUpper() = cave
+    
+let rec visit (paths: string list list) canVisit =
     paths
     |> List.map (fun path ->
         if (List.head path = "end") then [ [ path ] ]
         else
             caves.[List.head path]
             |> List.map (fun next ->
-                if (List.contains next path && isSmall next) then [ path ] else visit [ next :: path ]))
+                if canVisit next path then visit [ next :: path ] canVisit else [path]))
     |> (List.concat >> List.concat)
 
-let part1 =
-    visit [ [ "start" ] ]
+let paths canVisit =
+    visit [ [ "start" ] ] canVisit
     |> List.filter (fun path -> List.head path = "end")
-    |> List.length
+    
+let part1 = paths canVisit1 |> List.length
+
+let canVisit2 (cave: string) (path: string list) =
+    let map =
+        path
+        |> List.countBy id
+        |> List.filter (fun (cave, count) -> cave.ToUpper() <> cave && count > 1)
+        |> Map.ofList
+        
+    cave <> "start" && (cave.ToUpper() = cave || map.Count = 0 || not (List.contains cave path))
+
+let part2 = paths canVisit2 |> List.length
 
 [<EntryPoint>]
 let main _ =
-    printfn $"Part 1: %A{part1}"
+    printfn $"Part 1: %i{part1}"
+    printfn $"Part 1: %i{part2}"
     0
