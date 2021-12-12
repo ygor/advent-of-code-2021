@@ -14,6 +14,7 @@ let caves =
     
 let isSmall (cave: string) =
     cave.ToUpper() <> cave
+    
 let rec visit (paths: string list list) =
     paths
         |> List.map (fun path ->
