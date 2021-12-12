@@ -17,13 +17,13 @@ let isSmall (cave: string) =
     
 let rec visit (paths: string list list) =
     paths
-        |> List.map (fun path ->
-            if (List.head path = "end") then [[path]]
-            else
-                caves.[List.head path]
-                |> List.map (fun next ->
-                    if (List.contains next path && isSmall next) then [path] else visit [next :: path]))
-        |> (List.concat >> List.concat)
+    |> List.map (fun path ->
+        if (List.head path = "end") then [[path]]
+        else
+            caves.[List.head path]
+            |> List.map (fun next ->
+                if (List.contains next path && isSmall next) then [path] else visit [next :: path]))
+    |> (List.concat >> List.concat)
 
 let part1 =
     visit [["start"]]
