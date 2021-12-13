@@ -30,11 +30,12 @@ let part1 =
     |> List.length
 
 let render map =
-    let range = List.allPairs [List.minBy; List.maxBy] [fst; snd] |> List.map (fun (l, r) -> l r map)
+    let minx, maxx = List.minBy fst map, List.maxBy fst map
+    let miny, maxy = List.minBy snd map, List.maxBy snd map
     
-    [snd range.[1] .. snd range.[3]]
+    [snd miny .. snd maxy]
     |> List.iter (fun y ->
-        [fst range.[0] .. fst range.[2]]
+        [fst minx .. fst maxx]
         |> List.map (fun x -> if List.contains (x, y) map then "#" else ".")
         |> List.reduce (+)
         |> printfn "%s")
