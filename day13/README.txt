@@ -1,149 +1,111 @@
---- Day 12: Passage Pathing ---
-With your submarine's subterranean subsystems subsisting suboptimally, the only way you're getting out of this cave anytime soon is by finding a path yourself. Not just a path - the only way to know if you've found the best path is to find all of them.
+--- Day 13: Transparent Origami ---
+You reach another volcanically active part of the cave. It would be nice if you could do some kind of thermal imaging so you could tell ahead of time which caves are too hot to safely enter.
 
-Fortunately, the sensors are still mostly working, and so you build a rough map of the remaining caves (your puzzle input). For example:
+Fortunately, the submarine seems to be equipped with a thermal camera! When you activate it, you are greeted with:
 
-start-A
-start-b
-A-c
-A-b
-b-d
-A-end
-b-end
-This is a list of how all of the caves are connected. You start in the cave named start, and your destination is the cave named end. An entry like b-d means that cave b is connected to cave d - that is, you can move between them.
+Congratulations on your purchase! To activate this infrared thermal imaging
+camera system, please enter the code found on page 1 of the manual.
+Apparently, the Elves have never used this feature. To your surprise, you manage to find the manual; as you go to open it, page 1 falls out. It's a large sheet of transparent paper! The transparent paper is marked with random dots and includes instructions on how to fold it up (your puzzle input). For example:
 
-So, the above cave system looks roughly like this:
+6,10
+0,14
+9,10
+0,3
+10,4
+4,11
+6,0
+6,12
+4,1
+0,13
+10,12
+3,4
+3,0
+8,4
+1,10
+2,14
+8,10
+9,0
 
-    start
-    /   \
-c--A-----b--d
-    \   /
-     end
-Your goal is to find the number of distinct paths that start at start, end at end, and don't visit small caves more than once. There are two types of caves: big caves (written in uppercase, like A) and small caves (written in lowercase, like b). It would be a waste of time to visit any small cave more than once, but big caves are large enough that it might be worth visiting them multiple times. So, all paths you find should visit small caves at most once, and can visit big caves any number of times.
+fold along y=7
+fold along x=5
+The first section is a list of dots on the transparent paper. 0,0 represents the top-left coordinate. The first value, x, increases to the right. The second value, y, increases downward. So, the coordinate 3,0 is to the right of 0,0, and the coordinate 0,7 is below 0,0. The coordinates in this example form the following pattern, where # is a dot on the paper and . is an empty, unmarked position:
 
-Given these rules, there are 10 paths through this example cave system:
+...#..#..#.
+....#......
+...........
+#..........
+...#....#.#
+...........
+...........
+...........
+...........
+...........
+.#....#.##.
+....#......
+......#...#
+#..........
+#.#........
+Then, there is a list of fold instructions. Each instruction indicates a line on the transparent paper and wants you to fold the paper up (for horizontal y=... lines) or left (for vertical x=... lines). In this example, the first fold instruction is fold along y=7, which designates the line formed by all of the positions where y is 7 (marked here with -):
 
-start,A,b,A,c,A,end
-start,A,b,A,end
-start,A,b,end
-start,A,c,A,b,A,end
-start,A,c,A,b,end
-start,A,c,A,end
-start,A,end
-start,b,A,c,A,end
-start,b,A,end
-start,b,end
-(Each line in the above list corresponds to a single path; the caves visited by that path are listed in the order they are visited and separated by commas.)
+...#..#..#.
+....#......
+...........
+#..........
+...#....#.#
+...........
+...........
+-----------
+...........
+...........
+.#....#.##.
+....#......
+......#...#
+#..........
+#.#........
+Because this is a horizontal line, fold the bottom half up. Some of the dots might end up overlapping after the fold is complete, but dots will never appear exactly on a fold line. The result of doing this fold looks like this:
 
-Note that in this cave system, cave d is never visited by any path: to do so, cave b would need to be visited twice (once on the way to cave d and a second time when returning from cave d), and since cave b is small, this is not allowed.
+#.##..#..#.
+#...#......
+......#...#
+#...#......
+.#.#..#.###
+...........
+...........
+Now, only 17 dots are visible.
 
-Here is a slightly larger example:
+Notice, for example, the two dots in the bottom left corner before the transparent paper is folded; after the fold is complete, those dots appear in the top left corner (at 0,0 and 0,1). Because the paper is transparent, the dot just below them in the result (at 0,3) remains visible, as it can be seen through the transparent paper.
 
-dc-end
-HN-start
-start-kj
-dc-start
-dc-HN
-LN-dc
-HN-end
-kj-sa
-kj-HN
-kj-dc
-The 19 paths through it are as follows:
+Also notice that some dots can end up overlapping; in this case, the dots merge together and become a single dot.
 
-start,HN,dc,HN,end
-start,HN,dc,HN,kj,HN,end
-start,HN,dc,end
-start,HN,dc,kj,HN,end
-start,HN,end
-start,HN,kj,HN,dc,HN,end
-start,HN,kj,HN,dc,end
-start,HN,kj,HN,end
-start,HN,kj,dc,HN,end
-start,HN,kj,dc,end
-start,dc,HN,end
-start,dc,HN,kj,HN,end
-start,dc,end
-start,dc,kj,HN,end
-start,kj,HN,dc,HN,end
-start,kj,HN,dc,end
-start,kj,HN,end
-start,kj,dc,HN,end
-start,kj,dc,end
-Finally, this even larger example has 226 paths through it:
+The second fold instruction is fold along x=5, which indicates this line:
 
-fs-end
-he-DX
-fs-he
-start-DX
-pj-DX
-end-zg
-zg-sl
-zg-pj
-pj-he
-RW-he
-fs-DX
-pj-RW
-zg-RW
-start-pj
-he-WI
-zg-he
-pj-fs
-start-RW
-How many paths through this cave system are there that visit small caves at most once?
+#.##.|#..#.
+#...#|.....
+.....|#...#
+#...#|.....
+.#.#.|#.###
+.....|.....
+.....|.....
+Because this is a vertical line, fold left:
 
-Your puzzle answer was 4338.
+#####
+#...#
+#...#
+#...#
+#####
+.....
+.....
+The instructions made a square!
 
-The first half of this puzzle is complete! It provides one gold star: *
+The transparent paper is pretty big, so for now, focus on just completing the first fold. After the first fold in the example above, 17 dots are visible - dots that end up overlapping after the fold is completed count as a single dot.
+
+How many dots are visible after completing just the first fold instruction on your transparent paper?
+
+Your puzzle answer was 755.
 
 --- Part Two ---
-After reviewing the available paths, you realize you might have time to visit a single small cave twice. Specifically, big caves can be visited any number of times, a single small cave can be visited at most twice, and the remaining small caves can be visited at most once. However, the caves named start and end can only be visited exactly once each: once you leave the start cave, you may not return to it, and once you reach the end cave, the path must end immediately.
+Finish folding the transparent paper according to the instructions. The manual says the code is always eight capital letters.
 
-Now, the 36 possible paths through the first example above are:
+What code do you use to activate the infrared thermal imaging camera system?
 
-start,A,b,A,b,A,c,A,end
-start,A,b,A,b,A,end
-start,A,b,A,b,end
-start,A,b,A,c,A,b,A,end
-start,A,b,A,c,A,b,end
-start,A,b,A,c,A,c,A,end
-start,A,b,A,c,A,end
-start,A,b,A,end
-start,A,b,d,b,A,c,A,end
-start,A,b,d,b,A,end
-start,A,b,d,b,end
-start,A,b,end
-start,A,c,A,b,A,b,A,end
-start,A,c,A,b,A,b,end
-start,A,c,A,b,A,c,A,end
-start,A,c,A,b,A,end
-start,A,c,A,b,d,b,A,end
-start,A,c,A,b,d,b,end
-start,A,c,A,b,end
-start,A,c,A,c,A,b,A,end
-start,A,c,A,c,A,b,end
-start,A,c,A,c,A,end
-start,A,c,A,end
-start,A,end
-start,b,A,b,A,c,A,end
-start,b,A,b,A,end
-start,b,A,b,end
-start,b,A,c,A,b,A,end
-start,b,A,c,A,b,end
-start,b,A,c,A,c,A,end
-start,b,A,c,A,end
-start,b,A,end
-start,b,d,b,A,c,A,end
-start,b,d,b,A,end
-start,b,d,b,end
-start,b,end
-The slightly larger example above now has 103 paths through it, and the even larger example now has 3509 paths through it.
-
-Given these new rules, how many paths through this cave system are there?
-
-Answer: 
- 
-
-Although it hasn't changed, you can still get your puzzle input.
-
-You can also [Share] this puzzle.
+Your puzzle answer was BLKJRBAG.
