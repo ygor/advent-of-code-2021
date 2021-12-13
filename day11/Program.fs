@@ -1,4 +1,6 @@
-﻿let input = System.IO.File.ReadAllLines("input.txt")
+﻿open System.IO
+
+let input = File.ReadAllLines("input.txt")
 
 let grid: Map<(int * int), (int * bool)> =
     input
@@ -23,8 +25,7 @@ let rec flash (grid: Map<(int * int), (int * bool)>) =
             if fst grid.[x, y] > 9 then cascade (x, y) (grid.Add ((x, y), (0, true))) else grid) grid
     if Map.exists (fun _ (energy, flashed) -> energy > 9 && not flashed) grid' then flash grid' else grid'
     
-let step grid =
-    Map.map (fun _ (energy, _) -> energy + 1, false) grid |> flash
+let step grid = Map.map (fun _ (energy, _) -> energy + 1, false) grid |> flash
     
 let part1 steps =
     [0 .. (steps - 1)]
