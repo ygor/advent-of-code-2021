@@ -46,5 +46,5 @@ let part2 =
 [<EntryPoint>]
 let main _ =
     printfn $"Part 1: %i{part1}"
-    printfn $"Part 2: %A{render part2}"
+    printfn $"Part 2: {render part2}"
     0
