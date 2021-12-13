@@ -1,10 +1,7 @@
 ﻿open System.IO
 open day12.Extensions
 
-let input =
-    File.ReadAllText("input.txt")
-    |> String.split "\n\n"
-    |> List.ofSeq
+let input = File.ReadAllText("input.txt") |> String.split "\n\n" |> List.ofSeq
 
 let map =
     input.[0]
@@ -25,9 +22,7 @@ let fold (axis, value) map =
     |> List.ofSeq
 
 let part1 =
-    map
-    |> fold (List.head folds)
-    |> List.length
+    map |> fold (List.head folds) |> List.length
 
 let render map =
     let minx, maxx = List.minBy fst map, List.maxBy fst map
