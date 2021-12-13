@@ -20,7 +20,7 @@ let fold (axis, value) map =
     map
     |> List.map (fun (x, y) ->
         if axis = "y" then x, (if y > value then y - 2 * (y - value) else y)
-        else ((if x > value then x - 2 * (x - value) else x), y))
+        else (if x > value then x - 2 * (x - value) else x), y)
     |> Seq.distinct
     |> List.ofSeq
 
