@@ -18,8 +18,7 @@ let fold map (axis, value) =
     |> List.map (fun (x, y) ->
         if axis = "y" then x, (if y > value then y - 2 * (y - value) else y)
         else (if x > value then x - 2 * (x - value) else x), y)
-    |> Seq.distinct
-    |> List.ofSeq
+    |> List.distinct
 
 let part1 = fold map (List.head folds) |> List.length
 
