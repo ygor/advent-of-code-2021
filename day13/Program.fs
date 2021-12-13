@@ -13,7 +13,7 @@ let folds =
     |> String.split "\n"
     |> List.map (String.substring 11 >> String.split "=" >> (fun l -> l.[0], int l.[1]))
 
-let fold (axis, value) map =
+let fold map (axis, value) =
     map
     |> List.map (fun (x, y) ->
         if axis = "y" then x, (if y > value then y - 2 * (y - value) else y)
@@ -21,8 +21,7 @@ let fold (axis, value) map =
     |> Seq.distinct
     |> List.ofSeq
 
-let part1 =
-    map |> fold (List.head folds) |> List.length
+let part1 = fold map (List.head folds) |> List.length
 
 let render map =
     let minx, maxx = List.minBy fst map, List.maxBy fst map
@@ -35,8 +34,7 @@ let render map =
         |> List.reduce (+)
         |> printfn "%s")
 
-let part2 =
-    folds |> List.fold (fun map' (axis, value) -> fold (axis, value) map') map
+let part2 = folds |> List.fold fold map
 
 [<EntryPoint>]
 let main _ =
