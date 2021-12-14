@@ -1,111 +1,59 @@
---- Day 13: Transparent Origami ---
-You reach another volcanically active part of the cave. It would be nice if you could do some kind of thermal imaging so you could tell ahead of time which caves are too hot to safely enter.
+--- Day 14: Extended Polymerization ---
+The incredible pressures at this depth are starting to put a strain on your submarine. The submarine has polymerization equipment that would produce suitable materials to reinforce the submarine, and the nearby volcanically-active caves should even have the necessary input elements in sufficient quantities.
 
-Fortunately, the submarine seems to be equipped with a thermal camera! When you activate it, you are greeted with:
+The submarine manual contains instructions for finding the optimal polymer formula; specifically, it offers a polymer template and a list of pair insertion rules (your puzzle input). You just need to work out what polymer would result after repeating the pair insertion process a few times.
 
-Congratulations on your purchase! To activate this infrared thermal imaging
-camera system, please enter the code found on page 1 of the manual.
-Apparently, the Elves have never used this feature. To your surprise, you manage to find the manual; as you go to open it, page 1 falls out. It's a large sheet of transparent paper! The transparent paper is marked with random dots and includes instructions on how to fold it up (your puzzle input). For example:
+For example:
 
-6,10
-0,14
-9,10
-0,3
-10,4
-4,11
-6,0
-6,12
-4,1
-0,13
-10,12
-3,4
-3,0
-8,4
-1,10
-2,14
-8,10
-9,0
+NNCB
 
-fold along y=7
-fold along x=5
-The first section is a list of dots on the transparent paper. 0,0 represents the top-left coordinate. The first value, x, increases to the right. The second value, y, increases downward. So, the coordinate 3,0 is to the right of 0,0, and the coordinate 0,7 is below 0,0. The coordinates in this example form the following pattern, where # is a dot on the paper and . is an empty, unmarked position:
+CH -> B
+HH -> N
+CB -> H
+NH -> C
+HB -> C
+HC -> B
+HN -> C
+NN -> C
+BH -> H
+NC -> B
+NB -> B
+BN -> B
+BB -> N
+BC -> B
+CC -> N
+CN -> C
+The first line is the polymer template - this is the starting point of the process.
 
-...#..#..#.
-....#......
-...........
-#..........
-...#....#.#
-...........
-...........
-...........
-...........
-...........
-.#....#.##.
-....#......
-......#...#
-#..........
-#.#........
-Then, there is a list of fold instructions. Each instruction indicates a line on the transparent paper and wants you to fold the paper up (for horizontal y=... lines) or left (for vertical x=... lines). In this example, the first fold instruction is fold along y=7, which designates the line formed by all of the positions where y is 7 (marked here with -):
+The following section defines the pair insertion rules. A rule like AB -> C means that when elements A and B are immediately adjacent, element C should be inserted between them. These insertions all happen simultaneously.
 
-...#..#..#.
-....#......
-...........
-#..........
-...#....#.#
-...........
-...........
------------
-...........
-...........
-.#....#.##.
-....#......
-......#...#
-#..........
-#.#........
-Because this is a horizontal line, fold the bottom half up. Some of the dots might end up overlapping after the fold is complete, but dots will never appear exactly on a fold line. The result of doing this fold looks like this:
+So, starting with the polymer template NNCB, the first step simultaneously considers all three pairs:
 
-#.##..#..#.
-#...#......
-......#...#
-#...#......
-.#.#..#.###
-...........
-...........
-Now, only 17 dots are visible.
+The first pair (NN) matches the rule NN -> C, so element C is inserted between the first N and the second N.
+The second pair (NC) matches the rule NC -> B, so element B is inserted between the N and the C.
+The third pair (CB) matches the rule CB -> H, so element H is inserted between the C and the B.
+Note that these pairs overlap: the second element of one pair is the first element of the next pair. Also, because all pairs are considered simultaneously, inserted elements are not considered to be part of a pair until the next step.
 
-Notice, for example, the two dots in the bottom left corner before the transparent paper is folded; after the fold is complete, those dots appear in the top left corner (at 0,0 and 0,1). Because the paper is transparent, the dot just below them in the result (at 0,3) remains visible, as it can be seen through the transparent paper.
+After the first step of this process, the polymer becomes NCNBCHB.
 
-Also notice that some dots can end up overlapping; in this case, the dots merge together and become a single dot.
+Here are the results of a few steps using the above rules:
 
-The second fold instruction is fold along x=5, which indicates this line:
+Template:     NNCB
+After step 1: NCNBCHB
+After step 2: NBCCNBBBCBHCB
+After step 3: NBBBCNCCNBBNBNBBCHBHHBCHB
+After step 4: NBBNBNBBCCNBCNCCNBBNBBNBBBNBBNBBCBHCBHHNHCBBCBHCB
+This polymer grows quickly. After step 5, it has length 97; After step 10, it has length 3073. After step 10, B occurs 1749 times, C occurs 298 times, H occurs 161 times, and N occurs 865 times; taking the quantity of the most common element (B, 1749) and subtracting the quantity of the least common element (H, 161) produces 1749 - 161 = 1588.
 
-#.##.|#..#.
-#...#|.....
-.....|#...#
-#...#|.....
-.#.#.|#.###
-.....|.....
-.....|.....
-Because this is a vertical line, fold left:
+Apply 10 steps of pair insertion to the polymer template and find the most and least common elements in the result. What do you get if you take the quantity of the most common element and subtract the quantity of the least common element?
 
-#####
-#...#
-#...#
-#...#
-#####
-.....
-.....
-The instructions made a square!
-
-The transparent paper is pretty big, so for now, focus on just completing the first fold. After the first fold in the example above, 17 dots are visible - dots that end up overlapping after the fold is completed count as a single dot.
-
-How many dots are visible after completing just the first fold instruction on your transparent paper?
-
-Your puzzle answer was 755.
+Your puzzle answer was 4517.
 
 --- Part Two ---
-Finish folding the transparent paper according to the instructions. The manual says the code is always eight capital letters.
+The resulting polymer isn't nearly strong enough to reinforce the submarine. You'll need to run more steps of the pair insertion process; a total of 40 steps should do it.
 
-What code do you use to activate the infrared thermal imaging camera system?
+In the above example, the most common element is B (occurring 2192039569602 times) and the least common element is H (occurring 3849876073 times); subtracting these produces 2188189693529.
 
-Your puzzle answer was BLKJRBAG.
+Apply 40 steps of pair insertion to the polymer template and find the most and least common elements in the result. What do you get if you take the quantity of the most common element and subtract the quantity of the least common element?
+
+Your puzzle answer was 4704817645083.
