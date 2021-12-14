@@ -12,7 +12,8 @@ let numbers =
       "acf"
       "abcdefg"
       "abcdfg" ]
-    |> List.map Set.ofSeq
+    
+let segments = "abcdefg" |> List.ofSeq    
     
 let notes =
     File.ReadAllLines("input.txt")
@@ -20,75 +21,42 @@ let notes =
         line
         |> String.split " | "
         |> List.map (String.split " ")
-        |> (fun entry -> (entry.[0], entry.[1])))
+        |> List.unpack2)
+        
 let part1 =
-    let uniques = numbers |> Seq.groupBy Set.count |> Seq.head |> Seq.map snd >> Set.count 
+    let lengths =
+        numbers
+        |> List.groupBy Seq.length
+        |> List.filter (snd >> List.length >> ((=) 1))
+        |> List.map fst
     
     notes
     |> Seq.sumBy (fun (_, digits) ->
-        digits
-        |> List.filter (fun digit -> Seq.contains (List.length digit) uniques)
-        |> List.length)
+        digits |> List.lengthBy (fun digit -> Seq.contains digit.Length lengths))
 
-let branches (signals: string list list) =
-    let groups = List.groupBy Set.count numbers |> Map.ofSeq
-    
-    signals
-    |> List.map (fun signal -> signal, groups.[Seq.length signal])
-    |> List.fold (fun branches (signal, numbers) ->
-        branches
-        |> List.map (fun branch -> numbers |> List.map (fun number -> (signal, number) :: branch))
-        |> List.concat) [[]]
-
-let solve (map: Map<string, Set<string>>) =
-    let solved = Map.filter (fun _ values -> Set.count values = 1) map
-    
-    map
-    |> Map.map (fun key values ->
-        if Map.containsKey key solved then values
-        else Set.difference values (Map.values solved |> Set.unionMany))
-
-let update (map: Map<string, Set<string>>) (signal: string list, segments: Set<string>) =
-    signal
-    |> List.fold (fun map' wire ->
-        let segments' = if Map.containsKey wire map' then Set.intersect map'.[wire] segments else segments
-        Map.add wire segments' map') map
-    
-let rec decode signals =    
-    signals
-    |> branches
-    |> List.map (fun branch ->
-        branch
-        |> List.fold update Map.empty<string, Set<string>>
-        |> solve)
-    |> List.find (fun map ->
-        let count =
-            map
-            |> Map.values
-            |> Seq.filter (Set.count >> (=) 1)
-            |> Seq.length
-        count = Map.count map)
-
-let decrypt (map: Map<string, Set<string>>) (digit: string list) =
-    let segments =
-        digit
-        |> Seq.map (fun d -> map.[d])
-        |> Set.unionMany
-    
-    Seq.findIndex (fun number -> number = segments)
-
-let number (digits: string list list) (map: Map<string, Set<string>>) =
-    digits
-    |> Seq.map (decrypt map >> string)
+let decode (value: string) (key: char list) =
+    let map = List.zip key segments |> Map.ofList
+    value
+    |> Seq.map (fun s -> string map.[s])
+    |> Seq.sort
     |> Seq.reduce (+)
-    |> int
-    
+
+let solve (signals: string list) =
+    segments
+    |> List.permute
+    |> List.find (fun permutation ->
+        List.all (fun signal -> List.contains (decode signal permutation) numbers) signals)
+
 let part2 =
     notes
-    |> Seq.map (fun (signals, digits) ->
-        let map = decode signals
-        number digits map)
-    |> Seq.sum
+    |> Seq.sumBy (fun (signals, digits) ->
+        let key = solve signals
+        digits
+        |> List.map (fun digit ->
+            numbers
+            |> List.findIndex (fun number -> number = decode digit key)
+            |> string)
+        |> (List.reduce (+) >> int))
 
 [<EntryPoint>]
 let main _ =
