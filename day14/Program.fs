@@ -5,9 +5,8 @@ let input = File.ReadAllText("input.txt") |> String.split "\n\n" |> List.ofSeq
 
 let template =
     input.[0]
-    |> Seq.map string
     |> Seq.pairwise
-    |> Seq.map (fun (a, b) -> a + b)
+    |> Seq.map (fun (a, b) -> $"{a}{b}")
     |> Seq.countBy id
     |> Seq.map (fun (x, i) -> x, bigint i)
     |> Map.ofSeq
@@ -37,8 +36,7 @@ let result steps =
     [0 .. steps - 1 ]
     |> List.fold (fun polymer _ -> step polymer) template
     |> Map.fold (fun map' pair count ->
-        let value = if Map.containsKey pair.[1] map' then map'.[pair.[1]] + count else count
-        Map.add pair.[1] value map') Map.empty
+        Map.add pair.[1] (if Map.containsKey pair.[1] map' then map'.[pair.[1]] + count else count) map') Map.empty
     |> Map.update (Seq.head input.[0]) (fun value -> value + bigint 1)
     |> score
     
@@ -47,4 +45,3 @@ let main _ =
     printfn $"Part 1: %A{result 10}"
     printfn $"Part 2: %A{result 40}"
     0
-    
