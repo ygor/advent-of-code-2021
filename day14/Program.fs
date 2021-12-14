@@ -4,6 +4,7 @@ open day12.Extensions
 let input = File.ReadAllText("input.txt") |> String.split "\n\n" |> List.ofSeq
 
 let template = input.[0] |> Seq.map string |> List.ofSeq
+
 let rules =
     input.[1]
     |> String.split "\n"
@@ -13,11 +14,8 @@ let rules =
 let step template =
     template
     |> List.pairwise
-    |> List.indexed
-    |> List.fold (fun (polymer: string list) (index, pair) ->
-        let value = rules.[$"{fst pair}{snd pair}"]
-        let index' = polymer.Length - template.Length + index + 1
-        List.insertAt index' value polymer) template
+    |> List.flatMap (fun (left, right) -> [rules.[$"{left}{right}"]; right])
+    |> List.append [template.Head]
 
 let part1 =
     [0 .. 39 ]
