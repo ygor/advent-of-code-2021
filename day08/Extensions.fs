@@ -2,17 +2,7 @@ module day08.Extensions
 
 module String =
     let split (sep: string) (input: string) = input.Split(sep) |> List.ofArray
-
-    let ofCharSeq seq =
-        seq |> Seq.map string |> Seq.reduce (+)
         
-module Map =
-    let any predicate map =
-        map
-        |> Map.filter predicate
-        |> Map.count
-        |> (<) 0
-
 module List =        
     let rec distribute e = function
       | [] -> [[e]]
