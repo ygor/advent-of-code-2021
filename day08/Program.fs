@@ -34,14 +34,14 @@ let part1 =
     |> Seq.sumBy (fun (_, digits) ->
         digits |> List.lengthBy (fun digit -> Seq.contains digit.Length lengths))
 
-let decode (value: string) (key: char list) =
+let decode value key =
     let map = List.zip key segments |> Map.ofList
     value
     |> Seq.map (fun s -> string map.[s])
     |> Seq.sort
     |> Seq.reduce (+)
 
-let solve (signals: string list) =
+let solve signals =
     segments
     |> List.permute
     |> List.find (fun permutation ->
