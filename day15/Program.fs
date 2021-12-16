@@ -25,7 +25,7 @@ let updateNeighbours current neighbours (risks: Map<int * int, int>) map =
         let value = map.[current] + risks.[a]
         map.Add (a, if map.ContainsKey a && map.[a] < value then map.[a] else value)) map
 
-let dequeue current queue = List.filter (fun (a, _) -> a <> current) queue
+let dequeue current queue = List.filter (fst >> (<>) current) queue
     
 let enqueue unvisited (map: Map<int * int, int>) queue =
     unvisited
