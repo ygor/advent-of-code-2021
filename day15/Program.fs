@@ -1,56 +1,44 @@
 ﻿open System.IO
 open day12.Extensions
 
-let input = File.ReadAllLines("input.txt")
-
-let map =
-    input
+let risks =
+    File.ReadAllLines("input.txt")
     |> Seq.mapi (fun y -> Seq.mapi (fun x value -> (x, y), ((string >> int) value)))
     |> (Seq.concat >> Map.ofSeq)
 
-let width, height = Seq.length input.[0], Seq.length input
+let dimensions map =
+    Map.keys map |> Seq.maxBy fst |> fst, Map.keys map |> Seq.maxBy snd |> snd    
 
-let expand (map: Map<int * int, int>) =
-    List.foldn width (fun a x ->
-        List.foldn height (fun b y ->
-            List.foldn 5 (fun c mx ->
-                List.foldn 5 (fun (d: Map<int * int, int>) my ->
-                    let x', y' = x + (mx * width), y + (my * height)
-                    let value = (if mx > 0 then (d.[x' - width, y'] + 1) elif my > 0 then (d.[x', y' - height] + 1) else map.[x, y]) % 10 
-                    Map.add (x', y') (if value > 0 then value else 1) d) c) b) a) Map.empty
+let tiling (map: Map<int * int, int>) =
+    let width, height = dimensions map
+    List.foldn (5 * width) (fun outer x ->
+        List.foldn (5 * height) (fun inner y ->
+            let value = (map.[x % width, y % height] + x / width + y / height - 1) % 9 + 1 
+            Map.add (x, y) value inner) outer) Map.empty
 
-let delta width height (map: Map<int * int, int>) =
-    let init =
-        Map.add (0, 0) map.[0, 0] Map.empty<int * int, int>
-        |> List.foldn (width - 1) (fun delta' x -> Map.add (x + 1, 0) (delta'.[x, 0] + map.[x + 1, 0]) delta')
-        |> List.foldn (height - 1) (fun delta' y -> Map.add (0, y + 1) (delta'.[0, y] + map.[0, y + 1]) delta')
+let adjacents (x, y) =
+    [(0, 1); (1, 0); (-1, 0); (0, -1)] |> List.map (fun (dx, dy) -> x + dx, y + dy)
 
-    [1 .. width - 1]
-    |> List.fold (fun outer x ->
-        [1 .. height - 1]
-        |> List.fold (fun (inner: Map<int * int, int>) y ->
-            let value = [inner.[x - 1, y]; inner.[x, y-1]] |> List.min 
-            Map.add (x, y) (value + map.[x, y]) inner) outer) init
+let rec findPath current (visited: Set<int * int>) (risks: Map<int * int, int>) (map: Map<int * int, int>) =
+    let width, height = dimensions risks
+    let unvisited = adjacents current |> List.filter (fun p -> risks.Keys.Contains p && not(visited.Contains p))
+    let map'' =
+        unvisited
+        |> List.fold (fun (map: Map<int * int, int>) a ->
+            let value = map.[current] + risks.[a]
+            map.Add (a, if map.ContainsKey a && map.[a] < value then map.[a] else value)) map
 
-let render (map: Map<int * int, int>) width height =
-    [ 0 .. height - 1 ]
-    |> List.iter (fun y ->
-        [0 .. width - 1]
-        |> List.map (fun x -> string map.[x, y])
-        |> List.reduce (+)
-        |> printfn "%s")
+    if current = (width - 1, height - 1)
+    then map''.[width - 1, height - 1]
+    else
+        let next = unvisited |> Seq.min
+        findPath next (visited.Add current) risks map''
     
-let part1 =
-    let delta' = delta width height map
-    delta'.[width - 1, height - 1] - map.[0, 0]
-
+let part1 = findPath (0, 0) Set.empty risks (Map.add (0,0) 0 Map.empty)
+    
 let part2 =
-    let width', height' = 5 * width, 5 * height
-    let map' = expand map
-//    render map' width' height'
-
-    let delta' = delta width' height' map'
-    delta'.[width' - 1, height' - 1] - map.[0, 0]
+    let risks' = tiling risks
+    findPath (0, 0) Set.empty risks' (Map.add (0,0) 0 Map.empty)
     
 [<EntryPoint>]
 let main _ =
