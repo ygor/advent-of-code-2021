@@ -34,10 +34,9 @@ let enqueue unvisited (map: Map<int * int, int>) queue =
     
 let findPath (risks: Map<int * int, int>) =
     let width, height = dimensions risks
-    let finish = (width - 1, height - 1)
-
+    
     let rec loop (queue: ((int * int) * int) list) (visited: Set<int * int>) (map: Map<int * int, int>) =
-        if queue.IsEmpty then map.[finish]
+        if queue.IsEmpty then map.[width - 1, height - 1]
         else
             let current = List.minBy snd queue |> fst
             let unvisited = neighbours current |> List.filter (fun p -> risks.Keys.Contains p && not(visited.Contains p))
