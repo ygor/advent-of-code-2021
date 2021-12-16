@@ -25,7 +25,7 @@ let updateNeighbours current neighbours (risks: Map<int * int, int>) map =
         let value = map.[current] + risks.[a]
         map.Add (a, if map.ContainsKey a && map.[a] < value then map.[a] else value)) map
 
-let updateQueue current unvisited queue (map: Map<int * int, int>) =
+let updateQueue current unvisited (map: Map<int * int, int>) queue =
     unvisited
     |> List.map (fun p -> p, map.[p])
     |> List.append (List.filter (fun (a, _) -> a <> current) queue)
@@ -40,7 +40,7 @@ let findPath (risks: Map<int * int, int>) =
             let current = List.minBy snd queue |> fst
             let unvisited = adjacents current |> List.filter (fun p -> risks.Keys.Contains p && not(visited.Contains p))
             let map' = updateNeighbours current unvisited risks map
-            let queue' = updateQueue current unvisited queue map'
+            let queue' = updateQueue current unvisited map' queue
             
             loop queue' (visited.Add current) map'
 
