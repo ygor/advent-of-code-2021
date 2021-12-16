@@ -16,7 +16,7 @@ let tiling (map: Map<int * int, int>) =
             let value = (map.[x % width, y % height] + x / width + y / height - 1) % 9 + 1 
             Map.add (x, y) value inner) outer) Map.empty
 
-let adjacents (x, y) =
+let neighbours (x, y) =
     [(0, 1); (1, 0); (-1, 0); (0, -1)] |> List.map (fun (dx, dy) -> x + dx, y + dy)
 
 let updateNeighbours current neighbours (risks: Map<int * int, int>) map =
@@ -25,10 +25,12 @@ let updateNeighbours current neighbours (risks: Map<int * int, int>) map =
         let value = map.[current] + risks.[a]
         map.Add (a, if map.ContainsKey a && map.[a] < value then map.[a] else value)) map
 
-let updateQueue current unvisited (map: Map<int * int, int>) queue =
+let dequeue current queue = List.filter (fun (a, _) -> a <> current) queue
+    
+let enqueue unvisited (map: Map<int * int, int>) queue =
     unvisited
     |> List.map (fun p -> p, map.[p])
-    |> List.append (List.filter (fun (a, _) -> a <> current) queue)
+    |> List.append queue
     
 let findPath (risks: Map<int * int, int>) =
     let width, height = dimensions risks
@@ -38,9 +40,9 @@ let findPath (risks: Map<int * int, int>) =
         if queue.IsEmpty then map.[finish]
         else
             let current = List.minBy snd queue |> fst
-            let unvisited = adjacents current |> List.filter (fun p -> risks.Keys.Contains p && not(visited.Contains p))
+            let unvisited = neighbours current |> List.filter (fun p -> risks.Keys.Contains p && not(visited.Contains p))
             let map' = updateNeighbours current unvisited risks map
-            let queue' = updateQueue current unvisited map' queue
+            let queue' = queue |> dequeue current |> enqueue unvisited map'
             
             loop queue' (visited.Add current) map'
 
