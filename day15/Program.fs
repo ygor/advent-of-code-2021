@@ -1,5 +1,4 @@
-﻿open System.Collections.Generic
-open System.IO
+﻿open System.IO
 open day12.Extensions
 
 let risks =
@@ -36,8 +35,7 @@ let findPath (risks: Map<int * int, int>) =
                 unvisited
                 |> List.fold (fun (map: Map<int * int, int>) a ->
                     let value = map.[current] + risks.[a]
-                    let distance = if map.ContainsKey a && map.[a] < value then map.[a] else value
-                    map.Add (a, distance)) map
+                    map.Add (a, if map.ContainsKey a && map.[a] < value then map.[a] else value)) map
 
             let queue' =
                 unvisited
@@ -47,24 +45,9 @@ let findPath (risks: Map<int * int, int>) =
             loop queue' (visited.Add current) map'
 
     loop [(0, 0),0] (Set.add (0,0) Set.empty) (Map.add (0,0) 0 Map.empty)
-
-//let render (map: Map<int * int, int>) =
-//    [0 .. height - 1]
-//    |> List.iter (fun y ->
-//        [0 .. width - 1]
-//        |> List.map (fun x -> string map.[x, y])
-//        |> List.reduce (fun a b -> a.PadLeft(2) + " " + b.PadLeft(2))
-//        |> printfn "%s")
-
-let part1 =
-    findPath risks
-    
-let part2 =
-    let tiles = tiling risks
-    findPath tiles
     
 [<EntryPoint>]
 let main _ =
-    printfn $"Part 1: %i{part1}"
-    printfn $"Part 2: %i{part2}"
+    printfn $"Part 1: %i{findPath risks}"
+    printfn $"Part 2: %i{tiling risks |> findPath}"
     0
