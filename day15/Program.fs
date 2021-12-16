@@ -1,4 +1,5 @@
-﻿open System.IO
+﻿open System.Collections.Generic
+open System.IO
 open day12.Extensions
 
 let risks =
@@ -19,26 +20,51 @@ let tiling (map: Map<int * int, int>) =
 let adjacents (x, y) =
     [(0, 1); (1, 0); (-1, 0); (0, -1)] |> List.map (fun (dx, dy) -> x + dx, y + dy)
 
-let width, height = dimensions risks
+let findPath (risks: Map<int * int, int>) =
+    let width, height = dimensions risks
+    let finish = (width - 1, height - 1)
 
-let rec findPath current (visited: Set<int * int>) (risks: Map<int * int, int>) (map: Map<int * int, int>) =
-    let unvisited = adjacents current |> List.filter (fun p -> risks.Keys.Contains p && not(visited.Contains p))
-    let map' =
-        unvisited
-        |> List.fold (fun (map: Map<int * int, int>) a ->
-            let value = map.[current] + risks.[a]
-            map.Add (a, if map.ContainsKey a && map.[a] < value then map.[a] else value)) map
+    let rec loop (queue: ((int * int) * int) list) (visited: Set<int * int>) (map: Map<int * int, int>) =
+        if queue.IsEmpty then map.[finish]
+        else
+            let current = List.minBy snd queue |> fst
+            let unvisited =
+                adjacents current
+                |> List.filter (fun p -> risks.Keys.Contains p && not(visited.Contains p))
+ 
+            let map' =
+                unvisited
+                |> List.fold (fun (map: Map<int * int, int>) a ->
+                    let value = map.[current] + risks.[a]
+                    let distance = if map.ContainsKey a && map.[a] < value then map.[a] else value
+                    map.Add (a, distance)) map
 
-    if current = (width - 1, height - 1)
-    then map'.[width - 1, height - 1]
-    else findPath (unvisited |> Seq.min) (visited.Add current) risks map'
+            let queue' =
+                unvisited
+                |> List.map (fun p -> p, map'.[p])
+                |> List.append (List.filter (fun (a, _) -> a <> current) queue)
+            
+            loop queue' (visited.Add current) map'
+
+    loop [(0, 0),0] (Set.add (0,0) Set.empty) (Map.add (0,0) 0 Map.empty)
+
+//let render (map: Map<int * int, int>) =
+//    [0 .. height - 1]
+//    |> List.iter (fun y ->
+//        [0 .. width - 1]
+//        |> List.map (fun x -> string map.[x, y])
+//        |> List.reduce (fun a b -> a.PadLeft(2) + " " + b.PadLeft(2))
+//        |> printfn "%s")
+
+let part1 =
+    findPath risks
     
-let part1 = findPath (0, 0) (Set.add (0, 0) Set.empty) risks (Map.add (0,0) 0 Map.empty)
-
-//let part2 = findPath (0, 0) Set.empty (tiling risks) (Map.add (0,0) 0 Map.empty)
+let part2 =
+    let tiles = tiling risks
+    findPath tiles
     
 [<EntryPoint>]
 let main _ =
     printfn $"Part 1: %i{part1}"
-//    printfn $"Part 2: %i{part2}"
+    printfn $"Part 2: %i{part2}"
     0
